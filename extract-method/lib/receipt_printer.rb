@@ -49,7 +49,7 @@ class ReceiptPrinter
   end
 
   def subtotal
-    items.reduce(0) { |sum, item| sum += COST[item] }
+    @_subtotal ||= items.reduce(0) { |sum, item| sum += COST[item] }
   end
 
   def divider
