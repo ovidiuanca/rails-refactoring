@@ -1,35 +1,29 @@
 class User
   include ActiveModel::Model
-  attr_accessor :created_at, :credit_card, :subscription
-
-  FREE_TRIAL = 'Free Trial'
-  NO_PLAN = 'No Plan'
+  attr_accessor :created_at, :credit_card
+  attr_writer :subscription
 
   def charge
-    unless subscription.nil?
-      subscription.charge(credit_card)
-    end
+    subscription.charge(credit_card)
   end
 
   def has_mentoring?
-    free_trial? || subscription && subscription.has_mentoring?
+    subscription.has_mentoring?
   end
 
   def price
-    if free_trial? || subscription.nil?
-      0
-    else
-      subscription.price
-    end
+    subscription.price
   end
 
   def plan_name
+    subscription.plan_name
+  end
+
+  def subscription
     if free_trial?
-      FREE_TRIAL
-    elsif subscription
-      subscription.plan_name
+      FreeTrialSubscription.new
     else
-      NO_PLAN
+      @subscription || NullSubscription.new
     end
   end
 
